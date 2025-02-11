@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import CharField
-from .models import Product, Category, Customer, Cart, CartItem, Order, OrderItem
+from .models import Product, Category, Customer, Cart, CartItem, Order
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,12 +9,13 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     image_url = CharField(source='image.url', read_only=True)
+    # Override the category field to return its name instead of its id
+    category = serializers.CharField(source='category.name', read_only=True)
 
     class Meta:
         model = Product
         fields = '__all__'
         
-
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
@@ -34,16 +35,9 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = '__all__'
 
-class OrderItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-
-    class Meta:
-        model = OrderItem
-        fields = '__all__'
-
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True)
+    items = serializers.JSONField()  # Items stored as JSON
 
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ['id', 'customer', 'created_at', 'total_price', 'items']

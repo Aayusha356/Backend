@@ -71,8 +71,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTH_USER_MODEL = 'user.CustomUser'
 
-    
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS=['http://localhost:5173']
 
 ROOT_URLCONF = 'ecommerce.urls'
 
