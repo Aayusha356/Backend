@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from rest_framework.fields import CharField
-from .models import Product, Category, Customer, Cart, CartItem, Order
+from django.conf import settings  # ✅ For referencing CustomUser
+from .models import Product, Category, Cart, CartItem, Order
+
+User = settings.AUTH_USER_MODEL  # ✅ Get the CustomUser model dynamically
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,11 +17,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = '__all__'
-        
-class CustomerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Customer
         fields = '__all__'
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -36,8 +34,9 @@ class CartSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = serializers.JSONField()  # Items stored as JSON
+    items = serializers.JSONField()  # ✅ Items stored as JSON
+    user = serializers.CharField(source='user.username', read_only=True)  # ✅ Replace customer with user
 
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'created_at', 'total_price', 'items']
+        fields = ['id', 'user', 'created_at', 'total_price', 'items']
